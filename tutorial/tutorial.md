@@ -1,7 +1,7 @@
 ---
 layout: tutorial_hands_on
 
-title: "Reference-based RNA-Seq data analysis"
+title: "RNA-Seq data analysis,clustering and visualisation tutorial"
 subtopic: introduction
 priority: 2
 
@@ -9,11 +9,11 @@ tags:
     - bulk
     - rna-seq
     - collections
-    - drosophila
-    - QC
-    - cyoa
+    - mouse
+    - clustering
+    - PCA
 level: Introductory
-zenodo_link: "https://zenodo.org/record/6457007"
+zenodo_link: 
 questions:
     - What are the steps to process RNA-Seq data?
     - How to identify differentially expressed genes across multiple experimental conditions?
