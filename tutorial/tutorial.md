@@ -52,7 +52,7 @@ In the first part of this tutorial we will upload the count matrices to your Gal
 >
 >    {% snippet faqs/galaxy/histories_create_new.md %}
 >
-> 2. Import the count files from our [github repository](https://github.com/pacthoen/BMW2_RNA_clust_vis) using the Data Upload menu (top left) and the button _Paste/Fetch Data_. [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20105100.png). _Note_ The files with null in the filename are for the p53 knockout (p53-/-) cells and the files with p53 in the filename are for the wild-type cells
+> 2. Import the count files from our [github repository](https://github.com/pacthoen/BMW2_RNA_clust_vis) using the Data Upload menu (top left) and the button _Paste/Fetch Data_. [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20115748.png). _Note_ The files with null in the filename are for the p53 knockout (p53-/-) cells and the files with p53 in the filename are for the wild-type cells
 >    ```text
 >    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/p53_mock_1.csv
 >    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/p53_mock_2.csv
