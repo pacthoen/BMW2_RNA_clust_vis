@@ -583,7 +583,7 @@ We have extracted genes that are differentially expressed in IR- vs. mock-treate
 
 > 1. Use the _Gene length and GC content_ tool on the _Annotation file_ (gtf format). See this [screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20210701.png)
 > 2. Merge the gene length and the annotated DESeq2 ouput file **DESeq2 result file** with primary factor Treatment using the _Join two datasets side by side_ tool. In *"Keep the header lines"*: `No`. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20214135.png)
-> 3. Use the _Compute on rows_ tool to create a column with TRUE and FALSE using the following expression: `bool(float(c3)>2)`. In the *"Error handling"* choose in *"Autodetect column types"* `No` and *"Fail on references to non-existent columns"* `No` and *"If an expression cannot be computed for a row"* choose `Fill in a replacement value` and Replacement value `False` 
+> 3. Use the _Compute on rows_ tool to create a column with TRUE and FALSE using the following expression: `bool(float(c3)>2)`. In the *"Error handling"* choose in *"Autodetect column types"* `No` and *"Fail on references to non-existent columns"* `No` and *"If an expression cannot be computed for a row"* choose `Fill in a replacement value` and Replacement value `False`. See this [screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20222441.png)
 > 4. {% tool [Cut](Cut1) %} columns from a table with the following parameters:
 >    - *"Cut columns"*: `c1,c9`
 >    - *"Delimited by"*: `Tab`
@@ -632,12 +632,12 @@ We have now the two required input files for goseq.
     > <question-title></question-title>
     >
     > 1. How many GO terms are over-represented with an adjusted P-value < 0.05? How many are under-represented?
-    > 2. How are the over-represented GO terms divided into MF, CC and BP? And for under-represented GO terms?
+    > 2. Do you find evidence that p53 plays a role in the response to IR?
     >
     > > <solution-title></solution-title>
     > >
-    > > 1. 60 GO terms (0.50%) are over-represented and 7 (0.07%) under-represented.
-    > >
+    > > 1. 5 GO terms (4 from the Biological Processes category, 1 from the Molecular Function category) are over-represented.
+    > > 2. Signal transduction by p53 class mediator is second in rank and contains 19 differentially expressed genes.
     > >    {% tool [Filter data on any column using simple expressions](Filter1) %} on c8 (adjusted p-value for over-represented GO terms) and c9 (adjusted p-value for under-represented GO terms)
     > >
     > > 2. For over-represented, 50 BP, 5 CC and 5 MF and for under-represented, 5 BP, 2 CC and 0 MF
