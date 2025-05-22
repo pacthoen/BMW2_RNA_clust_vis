@@ -73,7 +73,7 @@ In the first part of this tutorial we will upload the count matrices to your Gal
 >
 > 4. Upload also the gene annotation file and choose _gtf.gz_ as file type
 >    ```text
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/Mus_musculus.NCBIM37.65.gtf.gz
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/Mus_musculus.NCBIM37.65.gtf.gz
 >    ```
 
 _Note:_ The numbers in the count files are the number of sequence reads to a specific genes. Only mRNAs that were detected in all samples were selected during the preprocessing of the data.
@@ -368,17 +368,11 @@ Multiple factors with several levels can then be incorporated in the analysis de
 
 In our example, we have samples with two varying factors that can contribute to differences in gene expression:
 
-- Treatment (either treated or untreated)
-- Sequencing type (paired-end or single-end)
+- Genotype (either wild-type or knock-out)
+- Treatment (either IR or mock)
 
-Here, treatment is the primary factor that we are interested in. The sequencing type is further information we know about the data that might affect the analysis. Multi-factor analysis allows us to assess the effect of the treatment, while taking the sequencing type into account too.
-
-> <comment-title></comment-title>
->
-> We recommend that you add all factors you think may affect gene expression in your experiment. It can be the sequencing type like here, but it can also be the manipulation (if different persons are involved in the library preparation), other batch effects, etc...
-{: .comment}
-
-If you have only one or two factors with few number of biological replicates, the basic setup of **DESeq2** is enough. In the case of a complex experimental setup with a large number of biological replicates, tag-based collections are appropriate. Both approaches give the same results. The Tag-based approach requires a few additional steps before running the **DESeq2** tool but it will payoff when working with a complex experimental setup.
+The effect of Ionizing Radiation (IR) is our primary interest. Later on, we will explore the differences in IR response between wild-type and knock-out cells and which genes are dependent on p53 for their response to IR.
+We will now assign each sample to the right group
 
 {% include _includes/cyoa-choices.html option1="Basic" option2="Tag-based" option3="Collection split" default="Basic" text="Which approach would you prefer to use?" disambiguation="deseq"%}
 
@@ -391,7 +385,7 @@ We can now run **DESeq2**:
 > 1. {% tool [DESeq2](toolshed.g2.bx.psu.edu/repos/iuc/deseq2/deseq2/2.11.40.8+galaxy0) %} with the following parameters:
 >    - *"how"*: `Select datasets per level`
 >        - In *"Factor"*:
->           - *"Specify a factor name, e.g. effects_drug_x or cancer_markers"*: `Treatment`
+>           - *"Specify the factor name"*: `Treatment`
 >           - In *"1: Factor level"*:
 >               - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `treated`
 >               - In *"Count file(s)"*: `Select all the treated count files (GSM461179, GSM461180, GSM461181)`
