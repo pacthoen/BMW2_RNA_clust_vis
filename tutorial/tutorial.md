@@ -52,20 +52,20 @@ In the first part of this tutorial we will upload the count matrices to your Gal
 >
 >    {% snippet faqs/galaxy/histories_create_new.md %}
 >
-> 2. Import the count files from our [github repository](https://github.com/pacthoen/BMW2_RNA_clust_vis) using the Data Upload menu (top left) and the button _Paste/Fetch Data_ and choosing _Tabular_ as file type. [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20105100.png)
+> 2. Import the count files from our [github repository](https://github.com/pacthoen/BMW2_RNA_clust_vis) using the Data Upload menu (top left) and the button _Paste/Fetch Data_. [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20105100.png). _Note_ The files with null in the filename are for the p53 knockout (p53-/-) cells and the files with p53 in the filename are for the wild-type cells
 >    ```text
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/p53_mock_1.csv
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/p53_mock_2.csv
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/p53_mock_3.csv
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/p53_mock_4.csv
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/p53_IR_1.csv
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/p53_IR_2.csv
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/p53_IR_3.csv
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/p53_IR_4.csv
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/null_mock_1.csv
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/null_mock_2.csv
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/null_IR_1.csv
->    https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/null_IR_2.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/p53_mock_1.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/p53_mock_2.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/p53_mock_3.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/p53_mock_4.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/p53_IR_1.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/p53_IR_2.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/p53_IR_3.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/p53_IR_4.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/null_mock_1.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/null_mock_2.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/null_IR_1.csv
+>    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/null_IR_2.csv 
 >    ``` 
 >
 > 3. Inspect some of the files by hitting the icon with the _eye_ button. 
@@ -94,37 +94,8 @@ _Note:_ The numbers in the count files are the number of sequence reads to a spe
 
 ## Identification of the differentially expressed features
 
-To be able to identify differential gene expression induced by PS depletion, all datasets (3 treated and 4 untreated) must be analyzed following the same procedure. To save time, we have run the previous steps for you. We then obtain 7 files with the counts for each gene of *Drosophila* for each sample.
-
-> <hands-on-title>Import all count files</hands-on-title>
->
-> 1. Create a **new empty history**
->
->    {% snippet faqs/galaxy/histories_create_new.md %}
->
-> 2. Import the seven count files from [Zenodo]({{ page.zenodo_link }}) or the Shared Data library:
->
->    - `GSM461176_untreat_single_featureCounts.counts`
->    - `GSM461177_untreat_paired_featureCounts.counts`
->    - `GSM461178_untreat_paired_featureCounts.counts`
->    - `GSM461179_treat_single_featureCounts.counts`
->    - `GSM461180_treat_paired_featureCounts.counts`
->    - `GSM461181_treat_paired_featureCounts.counts`
->    - `GSM461182_untreat_single_featureCounts.counts`
->
->    ```text
->    {{ page.zenodo_link }}/files/GSM461176_untreat_single_featureCounts.counts
->    {{ page.zenodo_link }}/files/GSM461177_untreat_paired_featureCounts.counts
->    {{ page.zenodo_link }}/files/GSM461178_untreat_paired_featureCounts.counts
->    {{ page.zenodo_link }}/files/GSM461179_treat_single_featureCounts.counts
->    {{ page.zenodo_link }}/files/GSM461180_treat_paired_featureCounts.counts
->    {{ page.zenodo_link }}/files/GSM461181_treat_paired_featureCounts.counts
->    {{ page.zenodo_link }}/files/GSM461182_untreat_single_featureCounts.counts
->    ```
->
-{: .hands_on}
-
-You might think we can just compare the count values in the files directly and calculate the extent of differential gene expression. However, it is not that simple.
+To be able to identify differential gene expression between wild-type and p53-null cells and between IR- and mock-treated cells, you might think we can just compare the count values in the files directly and calculate the extent of differential gene expression. 
+ However, it is not that simple.
 
 Let's imagine we have RNA-Seq counts from 3 samples for a genome with 4 genes:
 
@@ -368,14 +339,28 @@ DESeq2 also runs the Differential Gene Expression (DGE) analysis, which has two 
 - Estimate the biological variance using the replicates for each condition
 - Estimate the significance of expression differences between any two conditions
 
-This expression analysis is estimated from read counts and attempts are made to correct for variability in measurements using replicates, that are absolutely essential for accurate results. For your own analysis, we advise you to use at least 3, but preferably 5 biological replicates per condition. It is possible to have different numbers of replicates per condition.
+This expression analysis is estimated from read counts and attempts are made to correct for variability in measurements using replicates, that are absolutely essential for accurate results. 
 
 > <details-title>Technical vs biological replicates</details-title>
 >
 > A technical replicate is an experiment which is performed once but measured several times (e.g. multiple sequencing of the same library). A biological replicate is an experiment performed (and also measured) several times.
 >
-> In our data, we have 4 biological replicates (here called samples) without treatment and 3 biological replicates with treatment (*Pasilla* gene depleted by RNAi).
->
+> In our data, we have 2-4 biological replicates (here called samples) per condition.
+>    > <question-title></question-title>
+>    >
+>    > 1. How many conditions are there in this experiment and what is the number of replicates in each of the conditions?
+>    >
+>    > > <solution-title></solution-title>
+>    > >
+>    > > 1.There are 4 conditions
+>    > > - Wild-type cells not exposed to IR - 4 replicates
+>    > > - Wild-type cells exposed to IR - 4 replicates
+>    > > - TP53-/- cells not exposed to IR - 2 replicates
+>    > > - TP53-/- cells exposed to IR - 2 replicates
+>    > >
+>    > {: .solution}
+>    {: .question}
+
 > We recommend to combine the count tables for different technical replicates (but not for biological replicates) before a differential expression analysis (see [DESeq2 documentation](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#collapsing-technical-replicates))
 {: .details}
 
