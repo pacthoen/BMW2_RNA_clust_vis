@@ -406,220 +406,22 @@ We can now run **DESeq2**:
 >    - In *"Advanced options"*:
 >        - *"Use beta priors"*: `Yes`
 >    - In *"Output options"*:
->        - *"Output selector"*: `Generate plots for visualizing the analysis results`, `Output normalised counts`
+>        - *"Output selector"*: `Generate plots for visualizing the analysis results`, `Output normalised counts`, `Output VST normalized table`
 >
 {: .hands_on}
 
-</div>
 
-<div class="Tag-based" markdown="1">
-
-DESeq2 requires to provide for each factor, counts of samples in each category. We will thus use tags on our collection of counts to easily select all samples belonging to the same category. For more information about alternative ways to set group tags, please see [this tutorial]({% link topics/galaxy-interface/tutorials/group-tags/tutorial.md %}).
-
-> <hands-on-title>Add tags to your collection for each of these factors</hands-on-title>
->
-> 1. Create a collection list with all these counts that you label `all counts`. Name each item so it only has the GSM id, the treatment and the library, for example, `GSM461176_untreat_single`.
->
->    {% snippet faqs/galaxy/collections_build_list.md %}
->
-> 2. {% tool [Extract element identifiers](toolshed.g2.bx.psu.edu/repos/iuc/collection_element_identifiers/collection_element_identifiers/0.0.2) %} with the following parameters:
->    - {% icon param-collection %} *"Dataset collection"*: `all counts`
->
->    We will now extract from the names the factors:
->
-> 3. {% tool [Replace Text in entire line](toolshed.g2.bx.psu.edu/repos/bgruening/text_processing/tp_replace_in_line/9.3+galaxy1) %}
->      - {% icon param-file %} *"File to process"*: output of **Extract element identifiers** {% icon tool %}
->      - In *"Replacement"*:
->         - In *"1: Replacement"*
->            - *"Find pattern"*: `(.*)_(.*)_(.*)`
->            - *"Replace with"*: `\1_\2_\3\tgroup:\2\tgroup:\3`
->
->     This step creates 2 additional columns with the type of treatment and sequencing that can be used with the {% tool [Tag elements](__TAG_FROM_FILE__) %} tool
->
-> 4. Change the datatype to `tabular`
->
->    {% snippet faqs/galaxy/datasets_change_datatype.md datatype="tabular" %}
->
-> 5. {% tool [Tag elements](__TAG_FROM_FILE__) %}
->      - {% icon param-collection %} *"Input Collection"*: `all counts`
->      - {% icon param-file %} *"Tag collection elements according to this file"*: output of **Replace Text** {% icon tool %}
->
-> 6. Inspect the new collection
->
->    > <tip-title>You cannot see the changes?</tip-title>
->    >
->    > You may not see it at first glance as the names are the same. However if you click on one and click on {% icon galaxy-tags %} **Edit dataset tags**, you should see 2 tags which start with 'group:'. This keyword will allow to use these tags in **DESeq2**.
->     >
->     {: .tip}
->
-{: .hands_on}
-
-We can now run **DESeq2**:
-
-> <hands-on-title>Determine differentially expressed features</hands-on-title>
->
-> 1. {% tool [DESeq2](toolshed.g2.bx.psu.edu/repos/iuc/deseq2/deseq2/2.11.40.8+galaxy0) %} with the following parameters:
->    - *"how"*: `Select group tags corresponding to levels`
->        - {% icon param-collection %} *"Count file(s) collection"*: output of **Tag elements** {% icon tool %}
->        - In *"Factor"*:
->            - {% icon param-repeat %} *"Insert Factor"*
->                - *"Specify a factor name, e.g. effects_drug_x or cancer_markers"*: `Treatment`
->                - In *"Factor level"*:
->                    - {% icon param-repeat %} *"Insert Factor level"*
->                        - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `treated`
->                        - *"Select groups that correspond to this factor level"*: `Tags: treat`
->                    - {% icon param-repeat %} *"Insert Factor level"*
->                        - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `untreated`
->                        - *"Select groups that correspond to this factor level"*: `Tags: untreat`
->            - {% icon param-repeat %} *"Insert Factor"*
->                - *"Specify a factor name, e.g. effects_drug_x or cancer_markers"*: `Sequencing`
->                - In *"Factor level"*:
->                    - {% icon param-repeat %} *"Insert Factor level"*
->                        - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `PE`
->                        - *"Select groups that correspond to this factor level"*: `Tags: paired`
->                    - {% icon param-repeat %} *"Insert Factor level"*
->                        - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `SE`
->                        - *"Select groups that correspond to this factor level"*: `Tags: single`
->    - *"Files have header?"*: `Yes`
->    - *"Choice of Input data"*: `Count data (e.g. from HTSeq-count, featureCounts or StringTie)`
->    - In *"Advanced options"*:
->        - *"Use beta priors"*: `Yes`
->    - In *"Output options"*:
->        - *"Output selector"*: `Generate plots for visualizing the analysis results`, `Output normalised counts`
->
-{: .hands_on}
-
-</div>
-<div class="Collection-split" markdown="1">
-
-DESeq2 requires to provide for each factor, counts of samples in each category. We will thus use patterns on the name of our samples to easily select all samples belonging to the same category.
-
-> <hands-on-title>Generate a collection of each category</hands-on-title>
->
-> 1. Create a collection list with all these counts that you label `all counts`. Name each item so it only has the GSM id, the treatment and the library, for example, `GSM461176_untreat_single`.
->
->    {% snippet faqs/galaxy/collections_build_list.md %}
->
-> 2. {% tool [Extract element identifiers](toolshed.g2.bx.psu.edu/repos/iuc/collection_element_identifiers/collection_element_identifiers/0.0.2) %} with the following parameters:
->    - {% icon param-collection %} *"Dataset collection"*: `all counts`
->
->    We will now split the collection by treatment. We need to find a pattern which will be present into only one of the 2 categories. We will use the word `untreat`:
->
-> 3. {% tool [Search in textfiles](toolshed.g2.bx.psu.edu/repos/bgruening/text_processing/tp_grep_tool/9.3+galaxy1) %} (grep) with the following parameters:
->    - *"Select lines from"*: `Extract element identifiers on data XXX` (output of  **Extract element identifiers** {% icon tool %})
->    - *"that"*: `Match`
->    - *"Regular Expression"*: `untreat`
->
-> 4. {% tool [Filter collecion](__FILTER_FROM_FILE__) %} with the following parameters:
->    - *"Input collection"*: `all counts`
->    - *"How should the elements to remove be determined"*: `Remove if identifiers are ABSENT from file`
->        - *"Filter out identifiers absent from"*: `Search in textfiles on data XXX` (output of  **Search in textfiles** {% icon tool %})
->
-> 5. Rename both collections `untreated` (the filtered collection) and `treated` (the discarded collection).
->
-> We will repeat the same process using `single`
->
-> 6. {% tool [Search in textfiles](toolshed.g2.bx.psu.edu/repos/bgruening/text_processing/tp_grep_tool/9.3+galaxy1) %} (grep) with the following parameters:
->    - *"Select lines from"*: `Extract element identifiers on data XXX` (output of  **Extract element identifiers** {% icon tool %})
->    - *"that"*: `Match`
->    - *"Regular Expression"*: `single`
->
-> 7. {% tool [Filter collecion](__FILTER_FROM_FILE__) %} with the following parameters:
->    - *"Input collection"*: `all counts`
->    - *"How should the elements to remove be determined"*: `Remove if identifiers are ABSENT from file`
->        - *"Filter out identifiers absent from"*: `Search in textfiles on data XXX` (output of  **Search in textfiles** {% icon tool %})
->
-> 8. Rename both collections `single` (the filtered collection) and `paired` (the discarded collection).
-{: .hands_on}
-
-We can now run **DESeq2**:
-
-> <hands-on-title>Determine differentially expressed features</hands-on-title>
->
-> 1. {% tool [DESeq2](toolshed.g2.bx.psu.edu/repos/iuc/deseq2/deseq2/2.11.40.8+galaxy0) %} with the following parameters:
->    - *"how"*: `Select datasets per level`
->        - In *"Factor"*:
->           - *"Specify a factor name, e.g. effects_drug_x or cancer_markers"*: `Treatment`
->           - In *"1: Factor level"*:
->               - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `treated`
->               - {% icon param-collection %} *"Count file(s)"*: Select the collection `treated`
->           - In *"2: Factor level"*:
->               - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `untreated`
->               - {% icon param-collection %} *"Count file(s)"*: Select the collection `untreated`
->       - {% icon param-repeat %} *"Insert Factor"*
->           - *"Specify a factor name, e.g. effects_drug_x or cancer_markers"*: `Sequencing`
->               - In *"Factor level"*:
->                    - {% icon param-repeat %} *"Insert Factor level"*
->                        - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `PE`
->                        - {% icon param-collection %} *"Count file(s)"*: Select the collection `paired`
->                    - {% icon param-repeat %} *"Insert Factor level"*
->                        - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `SE`
->                        - {% icon param-collection %} *"Count file(s)"*: Select the collection `single`
->    - *"Files have header?"*: `Yes`
->    - *"Choice of Input data"*: `Count data (e.g. from HTSeq-count, featureCounts or StringTie)`
->    - In *"Advanced options"*:
->        - *"Use beta priors"*: `Yes`
->    - In *"Output options"*:
->        - *"Output selector"*: `Generate plots for visualizing the analysis results`, `Output normalised counts`
->
-{: .hands_on}
-</div>
-
-**DESeq2** generated 3 outputs:
+**DESeq2** generated 4 outputs:
 
 - A table with the normalized counts for each gene (rows) in the samples (columns)
 - A graphical summary of the results, useful to evaluate the quality of the experiment:
 
-    1. A plot of the first 2 dimensions from a principal component analysis ([PCA](https://en.wikipedia.org/wiki/Principal_component_analysis)), run on the normalized counts of the samples
-
-        > <details-title>What is a PCA?</details-title>
-        >
-        > Let's imagine we have some beer bottles standing here on the table. We can describe each beer by its colour, its foam, by how strong it is, and so on. We can compose a whole list of different characteristics of each beer in a beer shop. But many of them will measure related properties and so will be redundant. If so, we should be able to summarize each beer with fewer characteristics. This is what PCA or principal component analysis does.
-        >
-        > With PCA, we do not just select some interesting characteristics and discard the others. Instead, we construct some new characteristics that summarize our list of beers well. These new characteristics are constructed using the old ones. For example, a new characteristic might be computed, e.g. foam size minus beer pH. They are linear combinations.
-        >
-        > In fact, PCA finds the best possible characteristics, the ones that summarize the list of beers. These characteristics can be used to find similarities between beers and group them.
-        >
-        > Going back to read counts, the PCA is run on the normalized counts for all the samples. Here, we would like to describe the samples based on the expression of the genes. So the characteristics are the number of reads mapped on each genes. We use them and linear combinations of them to represent the samples and their similarities.
-        >
-        > *The beer analogy has been adapted from [an answer on StackExchange](https://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues)*.
-        >
-        {: .details}
-
-        It shows the samples in the 2D plane spanned by their first two principal components. Each replicate is plotted as an individual data point. This type of plot is useful for visualizing the overall effect of experimental covariates and batch effects.
-
-        > <question-title></question-title>
-        >
-        > ![DESeq PCA](../../images/ref-based/deseq2_pca.png "Principal component plot of the samples")
-        >
-        > 1. What is the first dimension (PC1) separating?
-        > 2. And the second dimension (PC2)?
-        > 3. What can we conclude about the DESeq design (factors, levels) we choose?
-        >
-        > > <solution-title></solution-title>
-        > >
-        > > 1. The first dimension is separating the treated samples from the untreated sample.
-        > > 2. The second dimension is separating the single-end datasets from the paired-end datasets.
-        > > 3. The datasets are grouped following the levels of the two factors. No hidden effect seems to be present on the data. If there is unwanted variation present in the data (e.g. batch effects), it is always recommended to correct for this, which can be achieved in DESeq2 by including in the design any known batch variables.
-        > {: .solution}
-        {: .question}
+    1. A plot of the first 2 dimensions from a principal component analysis 
 
     2. Heatmap of the sample-to-sample distance matrix (with clustering) based on the normalized counts.
 
         The heatmap gives an overview of similarities and dissimilarities between samples: the color represents the distance between the samples. Dark blue means shorter distance, i.e. closer samples given the normalized counts.
 
-        > <question-title></question-title>
-        >
-        > ![Heatmap of the sample-to-sample distances](../../images/ref-based/deseq2_sample_sample_distance_heatmap.png "Heatmap of the sample-to-sample distances")
-        >
-        > How are the samples grouped?
-        >
-        > > <solution-title></solution-title>
-        > >
-        > > They are first grouped by the treatment (the first factor) and secondly by the sequencing type (the second factor), as in the PCA plot.
-        > >
-        > {: .solution}
-        {: .question}
 
     3. Dispersion estimates: gene-wise estimates (black), the fitted values (red), and the final maximum a posteriori estimates used in testing (blue)
 
@@ -655,52 +457,35 @@ We can now run **DESeq2**:
 
 For more information about **DESeq2** and its outputs, you can have a look at the [**DESeq2** documentation](https://www.bioconductor.org/packages/release/bioc/manuals/DESeq2/man/DESeq2.pdf).
 
+- An output file with Normalized counts
+- An output file with VST-Normalized counts (VST stands for Variance Stabilization and Transformation; this is the preferred normalization method in DESeq2 and we will use these counts later on for PCA and clustering
+
+Use the **filter** tool on the summary file to identify the genes with absolute fold-change greater than 2. Use the condition: abs(c3)>2. Number of header lines to skip: 1. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20130228.png). And use the **sort** tool to identify the genes with the largest fold-change (most upregulated). See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20132050.png) 
 > <question-title></question-title>
 >
-> 1. Is the FBgn0003360 gene differentially expressed because of the treatment? If yes, how much?
-> 2. Is the *Pasilla* gene (ps, FBgn0261552) downregulated by the RNAi treatment?
-> 3. We could also hypothetically be interested in the effect of the sequencing (or other secondary factors in other cases). How would we know the differentially expressed genes because of sequencing type?
-> 4. We would like to analyze the interaction between the treatment and the sequencing. How could we do that?
+> 1. What does it mean when an mRNA has an absolute 2logFC greater than 2?
+> 2. How many mRNAs have an absolute 2logFC greater than 2?
+> 3. What is the mRNA that is most upregulated in and what is its false discovery rate (the chance that this is a false positive)? 
 >
 > > <solution-title></solution-title>
 > >
-> > 1. FBgn0003360 is differentially expressed because of the treatment: it has a significant adjusted p-value ($$2.8 \cdot 10^{-171} << 0.05$$). It is less expressed (`-` in the log2FC column) in treated samples compared to untreated samples, by a factor ~8 ($$2^{log2FC} = 2^{2.99542318410271}$$).
-> >
-> > 2. You can manually check for the `FBgn0261552` in the first column or run {% tool [Filter data on any column using simple expressions](Filter1) %}
-> >   - {% icon param-file %} *"Filter"*: the `DESeq2 result file` (output of **DESeq2** {% icon tool %})
-> >   - *"With following condition"*: `c1 == "FBgn0261552"`
-> >
-> >    The log2 fold-change is negative so it is indeed downregulated and the adjusted p-value is below 0.05 so it is part of the significantly changed genes.
-> >
-> > 3. DESeq2 in Galaxy returns the comparison between the different levels for the 1st factor, after
-> >    correction for the variability due to the 2nd factor. In our current case, treated against untreated for any sequencing type. To compare sequencing types, we should run DESeq2 again switching factors: factor 1 (treatment) becomes factor 2 and factor 2 (sequencing) becomes factor 1.
-> > 4. To add the interaction between two factors (e.g. treated for paired-end data vs untreated for single-end), we should run DESeq2 another time but with only one factor with the following 4 levels:
-> >    - treated-PE
-> >    - untreated-PE
-> >    - treated-SE
-> >    - untreated-SE
-> >
-> >    By selection *"Output all levels vs all levels of primary factor (use when you have >2 levels for primary factor)"* to `Yes`, we can then compare treated-PE vs untreated-SE.
-> >
+> > 1. That the genes is 2^2 = 4 times higher or lower expressed in the cells treated with IR than in mock-treated cells
+> > 2. 666 (!) 
+> > 3. y
 > {: .solution}
 {: .question}
 
 ## Annotation of the DESeq2 results
 
-The ID for each gene is something like FBgn0003360, which is an ID from the corresponding database, here Flybase ({% cite thurmond2018flybase %}). These IDs are unique but sometimes we prefer to have the gene names, even if they may not reference an unique gene (e.g. duplicated after re-annotation). But gene names may hint already to a function or they help you to search for desired candidates. We would also like to display the location of these genes within the genome. We can extract such information from the annotation file which we used for mapping and counting.
+The ID for each gene is something like ENSMUSG00000026581, which is an ID from the Ensembl gene database. These IDs are unique but sometimes we prefer to have the gene names, even if they may not reference an unique gene (e.g. duplicated after re-annotation). But gene names may hint already to a function or they help you to search for desired candidates. We would also like to display the location of these genes within the genome. We can extract such information from the annotation file which we uploaded before.
 
 > <hands-on-title>Annotation of the DESeq2 results</hands-on-title>
 >
-> 1. Import the Ensembl gene annotation for *Drosophila melanogaster* (`Drosophila_melanogaster.BDGP6.32.109_UCSC.gtf.gz`) from the previous history, or from the Shared Data library or from Zenodo:
 >
->    ```text
->    {{ page.zenodo_link }}/files/Drosophila_melanogaster.BDGP6.32.109_UCSC.gtf.gz
->    ```
->
-> 2. {% tool [Annotate DESeq2/DEXSeq output tables](toolshed.g2.bx.psu.edu/repos/iuc/deg_annotate/deg_annotate/1.1.0) %} with:
+> 1. {% tool [Annotate DESeq2/DEXSeq output tables](toolshed.g2.bx.psu.edu/repos/iuc/deg_annotate/deg_annotate/1.1.0) %} with:
 >    - {% icon param-file %} *"Tabular output of DESeq2/edgeR/limma/DEXSeq"*: the `DESeq2 result file` (output of **DESeq2** {% icon tool %})
 >    - *"Input file type"*: `DESeq2/edgeR/limma`
->    - {% icon param-file %} *"Reference annotation in GFF/GTF format"*: imported gtf `Drosophila_melanogaster.BDGP6.32.109_UCSC.gtf.gz`
+>    - {% icon param-file %} *"Reference annotation in GFF/GTF format"*: imported gtf `Annotation file`
 >
 {: .hands_on}
 
