@@ -507,15 +507,13 @@ The generated output is an extension of the previous file:
 
 > <question-title></question-title>
 >
-> 1. Where is the most over-expressed gene located?
-> 2. What is the name of the gene?
-> 3. Where is the *Pasilla* gene located (FBgn0261552)?
->
+> 1. What is the Gene Symbol of the most overexpressed gene
+> 2. On which chromosome is the most over-expressed gene located?
+>  
 > > <solution-title></solution-title>
 > >
-> > 1. FBgn0025111 (the top-ranked gene with the highest positive log2FC value) is located on the reverse strand of chromosome X, between 10,778,953 bp and 10,786,907 bp.
-> > 2. From the table, we got the gene symbol: Ant2. After some search on the [online biological databases](https://www.ncbi.nlm.nih.gov/gene/32008), we find that Ant2 corresponds to adenine nucleotide translocase 2.
-> > 3. The *Pasilla* gene is located on the forward strand of chromosome 3R, between 9,417,939 bp and 9,455,500 bp.
+> > 1. ENSMUSG00000000308 (the top-ranked gene with the highest positive log2FC value)
+> > 2. It is located on the reverse strand of chromosome X, between 10,778,953 bp and 10,786,907 bp.
 > {: .solution}
 {: .question}
 
@@ -530,71 +528,20 @@ The annotated table contains no column names, which makes it difficult to read. 
 >    ```
 >
 >    {% snippet faqs/galaxy/datasets_create_new_file.md name="header" format="tabular" %}
+>    See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20134800.png)
 >
-> 2. {% tool [Concatenate datasets](cat1) %} to add this header line to the **Annotate** output:
+> 3. {% tool [Concatenate datasets](cat1) %} to add this header line to the **Annotate** output:
 >    - {% icon param-file %} *"Concatenate Dataset"*: the `header` dataset
 >    - *"Dataset"*
 >       - Click on {% icon param-repeat %} *"Insert Dataset"*
 >         - {% icon param-file %} *"select"*: output of **Annotate** {% icon tool %}
 >
-> 3. Rename the output to `Annotated DESeq2 results`
+> 4. Rename the output to `Annotated DESeq2 results`
 {: .hands_on}
 
-## Extraction and annotation of differentially expressed genes
+## Create Volcona plot to visualise differentially expressed genes
 
-Now we would like to extract the most differentially expressed genes due to the treatment with a fold change > 2 (or < 1/2).
 
-> <hands-on-title>Extract the most differentially expressed genes</hands-on-title>
->
-> 1. {% tool [Filter data on any column using simple expressions](Filter1) %} to extract genes with a significant change in gene expression (adjusted *p*-value below 0.05) between treated and untreated samples:
->    - {% icon param-file %} *"Filter"*: `Annotated DESeq2 results`
->    - *"With following condition"*: `c7<0.05`
->    - *"Number of header lines to skip"*: `1`
->
-> 2. Rename the output `Genes with significant adj p-value`.
->
->    > <question-title></question-title>
->    >
->    > How many genes have a significant change in gene expression between these conditions?
->    >
->    > > <solution-title></solution-title>
->    > >
->    > > We get 966 (967 lines including a header) genes (4.04%) with a significant change in gene expression between treated and untreated samples.
->    > >
->    > {: .solution}
->    {: .question}
->    >
->    > <comment-title></comment-title>
->    >
->    > The file with the independently filtered results can be used for further downstream analysis as it excludes genes with only a few read counts, as these genes will not be considered as significantly differentially expressed.
->    {: .comment}
->
->    We will now select only the genes with a fold change (FC) > 2 or FC < 0.5. Note that the DESeq2 output file contains $$log_{2} FC$$, rather than FC itself, so we filter for $$abs(log_{2} FC) > 1$$ (which implies FC > 2 or FC < 0.5).
->
-> 3. {% tool [Filter data on any column using simple expressions](Filter1) %} to extract genes with an $$abs(log_{2} FC) > 1$$:
->    - {% icon param-file %} *"Filter"*: `Genes with significant adj p-value`
->    - *"With following condition"*: `abs(c3)>1`
->    - *"Number of header lines to skip"*: `1`
->
-> 4. Rename the output `Genes with significant adj p-value & abs(log2(FC)) > 1`.
->
->    > <question-title></question-title>
->    >
->    > 1. How many genes have been conserved?
->    > 2. Can the *Pasilla* gene (ps, FBgn0261552) be found in this table?
->    >
->    > > <solution-title></solution-title>
->    > >
->    > > 1. We get 113 genes (114 lines including a header), or 11.79% of the significantly differentially expressed genes.
->    > > 2. The *Pasilla* gene can be found with a quick Search (or even using  {% tool [Filter data on any column using simple expressions](Filter1) %} )
->    > {: .solution}
->    {: .question}
->
-{: .hands_on}
-
-We now have a table with 113 lines and a header corresponding to the most differentially expressed genes. For each gene, we have its ID, its mean normalized counts (averaged over all samples from both conditions), its $$log_{2} FC$$ and other information including gene name and position.
-
-## Visualization of the expression of the differentially expressed genes
 
 We could plot the $$log_{2} FC$$ for the extracted genes, but here we would like to look at a heatmap of expression for these genes in the different samples. So we need to extract the normalized counts for these genes.
 
