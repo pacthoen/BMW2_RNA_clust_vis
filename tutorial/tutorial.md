@@ -471,7 +471,7 @@ Use the **filter** tool on the summary file to identify the genes with absolute 
 > >
 > > 1. That the genes is 2^2 = 4 times higher or lower expressed in the cells treated with IR than in mock-treated cells
 > > 2. 666 (!) 
-> > 3. y
+> > 3. ENSMUSG00000000308; FDR is in p-adj column. It is 1.3*10{-26}
 > {: .solution}
 {: .question}
 
@@ -486,7 +486,7 @@ The ID for each gene is something like ENSMUSG00000026581, which is an ID from t
 >    - {% icon param-file %} *"Tabular output of DESeq2/edgeR/limma/DEXSeq"*: the `DESeq2 result file` (output of **DESeq2** {% icon tool %})
 >    - *"Input file type"*: `DESeq2/edgeR/limma`
 >    - {% icon param-file %} *"Reference annotation in GFF/GTF format"*: imported gtf `Annotation file`
->
+>    - See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20132922.png)
 {: .hands_on}
 
 The generated output is an extension of the previous file:
