@@ -387,19 +387,19 @@ We can now run **DESeq2**:
 >        - In *"Factor"*:
 >           - *"Specify the factor name"*: `Treatment`
 >           - In *"1: Factor level"*:
->               - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `IR`
+>               - *"Specify the factor level"*: `IR`
 >               - In *"Count file(s)"*: `Select all the IR treated count files`. _Note1:_ Use the _Switch to column select_ option to select the files. _Note2:_ The first factor level is compared to the second factor level. In this case IR vs. mock. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20123708.png)
 >           - In *"2: Factor level"*:
->               - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `Mock`
+>               - *"Specify the factor level"*: `Mock`
 >               - In *"Count file(s)"*: `Select all the mock treated count files`
 >       - {% icon param-repeat %} *"Insert Factor"*
->           - *"Specify a factor name, e.g. effects_drug_x or cancer_markers"*: `Genotype`
+>           - *"Specify the factor name"*: `Genotype`
 >               - In *"Factor level"*:
 >                    - {% icon param-repeat %} *"Insert Factor level"*
->                        - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `KO`
+>                        - *"Specify the factor level"*: `KO`
 >                        - In *"Count file(s)"*: `Select all the KO count files.`  i.e. those with null in the file name
 >                    - {% icon param-repeat %} *"Insert Factor level"*
->                        - *"Specify a factor level, typical values could be 'tumor', 'normal', 'treated' or 'control'"*: `WT`
+>                        - *"Specify the factor level"*: `WT`
 >                        - In *"Count file(s)"*: `Select all the WT count files` i.e. those with p53 in the file name
 >    - *"Files have header?"*: `Yes`
 >    - *"Choice of Input data"*: `Count data (e.g. from HTSeq-count, featureCounts or StringTie)`
