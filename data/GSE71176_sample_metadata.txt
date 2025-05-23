@@ -1,0 +1,13 @@
+sampleMetadata	Genotype	Treatment
+p53_mock_4	wt	mock
+p53_mock_3	wt	mock
+p53_mock_2	wt	mock
+p53_mock_1	wt	mock
+null_mock_2	null	mock
+null_mock_1	null	mock
+null_IR_2	null	IR
+p53_IR_4	wt	IR
+p53_IR_3	wt	IR
+p53_IR_2.csv	wt	IR
+p53_IR_1.csv	wt	IR
+null_IR_1.csv	null	IR
