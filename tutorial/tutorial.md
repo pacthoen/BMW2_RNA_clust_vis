@@ -742,30 +742,51 @@ The PCA scores plot representing the projection of samples on the two first comp
     > <question-title></question-title>
     >
     > 1. What is the cumulative percentage explained by the first two components.
-    > 2. 
+    > 2. Which one of the two factors in the experiment has the largest effect on the gene expression levels: the genotype (TP53-/- or wild-type) or the exposure to IR? Play with the plot colors and shapes and create a figure that nicely visualizes this.
+
     >
     > > <solution-title></solution-title>
     > >
     > > 1.  The score plots contains the percentage of variance explained in the axis titles. Principal component t1  explains 51% of total variability and t2 18% of total variability. The cumulative variance explained by the first two components is 51+18 = 69%.
-    > >
+    > > 2. The t1 nicely separates the IR_treated cells from the mock-treated cells. t1 explains most of the variation thus IR treatment explains most of the variation. The t2 mainly separates the KO cells treated with IR, suggesting that KO cells respond differently to IR than WT cells, which makes sense because p53 is important for the response to IR. 
     > {: .solution}
     {: .question}
 
-Questions
-1.
+> 4. Repeat the analysis but now with four principal components and plot principal component 3 at the x-axis (abscissa) and component 4 at the y-axis (ordinate)
+> 5. Optional: one can also OPLS (Orthogonal Partial Least Squares) which is a supervised form of multivariate analysis
 
-
-this result confirms the impact of total concentration on our dataset.
-Since this effect in data is independant of the question of interest that we suppose we investigate in the study (in the case of this tutorial),
-we may want to get rid of this effect to prevent a power reduction in further statistical analysis.
-
-4. Repeat the analysis but now with four principal components and plot principal component 3 at the x-axis (abscissa) and component 4 at the y-axis
-> 5. Optional: one can also OPLS (Orthogonal Partial Least Squares) which is a supervised form of multivariatie analysis
 
 ## Clustering
+
+We will use the _heatmap2_ tool to perform the clustering of samples based on their mRNA expression patterns and evaluate the influence of different clustering algorithms (average linkage vs single linkage) and distance measures (Euclidean distance or Pearson correlation). See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20152150.png)
+
+> 1. Select as *"Input"* `Input data for PCA and clustering`
+>    - *"Plot title"*: indicate the clustering algorithm and the distance measure used
+>    - *"Data transformation"*: `Plot the data as is`. Because the data has already been VST normalized
+>    - *"Compute Z-scores prior to clustering"*: `Compute on rows`. This brings all the genes on the same scale (mean zero and standard deviation. If you do not this (you can check!) the clustering will group high expressed genes together and low expressed together, whereas it is more interesting to cluster genes based on the differences seen between samples.
+>    - *"Distance method"*: `Euclidean` OR `Pearson`
+>    - *"Clustering method"*: `Average (=UPGMA)` OR `Single`
+>    - *"Type of colormap to use"*: `Gradient with 3 colors`
+>   
+> 
+    > <question-title></question-title>
+    >
+    > 1. How does the clustering of samples relate to the PCA results?
+    > 2. Which differences do you observe between different clustering algorithms and different distance measures?
+    > 3. Indicate the cluster of genes for which their IR response is p53-dependent. Are these genes mostly up- or downregulated after IR?
+
+    >
+    > > <solution-title></solution-title>
+    > >
+    > > 1. Again, the IR-exposed cells cluster separately from the mock-exposed cells. 
+There is not much difference between the TP53-/- and wild-type mock-exposed cells, whilst the IR-exposed TP53-/- and wild-type cells cluster separately.
+    > > 2. The clustering is not very dependent on the Distance measure used. However, with single linkage, it is much more difficult to identify discrete clusters, because the single, closest feature is added each time to an already existing cluster. Average and complete linkage methods usually start with finding the closest features that make up distinct clusters.
+    > > 3. There is a cluster of genes that is only upregulated in the cells that are wild-type for p53 and not in IR-treated knockout cells. These mRNAs are dependent on p53 expression for their upregulation after exposure to IR. 
+    > {: .solution}
+    {: .question}
 
 
 # Conclusion
 
-In this computer assignment, we have analyzed real RNA sequencing data to extract useful information, such as which genes are up or downregulated by IR. Your complete workflow can be extracted using the _Worklows_ button. Do this. You can always rerun and adapt your entire workflow.
+In this computer assignment, we have analyzed real RNA sequencing data to extract useful information, such as which genes are up or downregulated by IR. Your complete workflow can be extracted using the _Worklows_ button. Do this according to this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20155239.png). You can always rerun and adapt your entire workflow.
 
