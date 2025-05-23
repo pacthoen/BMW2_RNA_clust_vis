@@ -28,7 +28,8 @@ key_points:
 contributions:
   authorship:
     - pacthoen
-    - cdevisser
+    - casper937
+    - charlotteradboud
 ---
 
 
@@ -666,267 +667,93 @@ We have now the two required input files for goseq.
 
 > <comment-title>Advanced tutorial on enrichment analysis</comment-title>
 >
-> In this tutorial, we covered GO enrichment analysis with **goseq**. To learn other methods and tools for gene set enrichment analysis, please have a look at the ["RNA-Seq genes to pathways"]({% link topics/transcriptomics/tutorials/rna-seq-genes-to-pathways/tutorial.md %}) tutorial.
+> In this tutorial, we covered GO enrichment analysis with **goseq**. You can also use the same method to identify metabolic and signal transduction pathways from the KEGG database (do not select plotting the Top GO pathways in that case). To learn other methods and tools for gene set enrichment analysis, please have a look at the ["RNA-Seq genes to pathways"]({% link topics/transcriptomics/tutorials/rna-seq-genes-to-pathways/tutorial.md %}) tutorial.
 {: .comment}
 
-## KEGG pathways analysis
 
-**goseq** can also be used to identify interesting KEGG pathways. The KEGG pathway database is a collection of pathway maps representing current knowledge of molecular interaction, reaction and relation networks. A map can integrate many entities including genes, proteins, RNAs, chemical compounds, glycans, and chemical reactions, as well as disease genes and drug targets.
+# Visualisation of high-dimensional datasets
+In the second part of this computer assignment we will use commonly used techniques to identify the main sources of variation and to evaluate which samples and sample groups are most similar. We will continue using the same dataset but first filter for the most variable genes. This is for computational efficiency and to reduce the effect of noise.
 
-For example, the pathway `dme00010` represents the glycolysis process (conversion of glucose into pyruvate with generation of small amounts of ATP and NADH) for Drosophila melanogaster:
 
-![dme00010 KEGG pathway](../../images/ref-based/dme00010_empty.png)
+## Filter for most variable genes
+For filtering the most variable genes, we will compute the coefficient of variation (CV). This is defined as the standard deviation divided by the mean. 
+> 1. Use the the _Table compute_ tool to calculate the standard deviation (std)
+>    - *"Table"*: `VST normalized data`
+>    - *"Input data has"*: `Column names on the first row` and `Row names on the first column`
+>    - *"Type of table operation "*: `Compute expression across rows or columns`
+>       - *"Calculate"*: `Custom`
+>       - *"Custom function on vec"*: `vec.std`
+>       - *"For each"*: `row`
+>    - See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20085500.png)
+> 2. Use the the _Table compute_ tool to calculate the mean (mean)
+>    - *"Table"*: `VST normalized data`
+>    - *"Input data has"*: `Column names on the first row` and `Row names on the first column`
+>    - *"Type of table operation "*: `Compute expression across rows or columns`
+>       - *"Calculate"*: `Custom`
+>       - *"Custom function on vec"*: `vec.mean`
+>       - *"For each"*: `row`
+> 3. Use the _Join two files_ tool to merge the normalised count data with the standard deviation and mean datasets (two steps)
+>    -  *"First line is a header line"*: `Yes`
+> 4. Use the _Compute on row_ tool to calculate the CV. Expression `c14/c15`. Label the new row as `CV`
+> 5. Use the _Sort_ tool to sort the genes based on CV in descending order. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20104444.png)
+>    - *"Number of header lines"*: `1`
+>    - *"Column selections"*
+>       - *"on column"*: `16`
+>       - *"in"*: `decsending order`
+>       - *"Flavour"*: `Fast numeric sort (-n)`     
+> 6. Select the first 2000 rows using the _Select first_ tool. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20105700.png)
+> 7. Select only the columns with data (and the first column with the gene identifiers; columns 1-13) using the _Cut_ tool
+> 8. Relabel the file as `Input data for PCA and clustering` 
+>    
+>    - 
 
-> <hands-on-title>Perform KEGG pathway analysis</hands-on-title>
+
+## Principal Component Analysis (PCA)
+PCA is a dimension reduction technique to identify the main sources of variation. 
+For this part of the assignment we will use the _multivariate_ tool. There is a separate [tutorial](https://training.galaxyproject.org/topics/metabolomics/tutorials/lcms-dataprocessing/tutorial.html#bibliography) for the _multivariate_ tool applied to metabolomics data.   
+
+The tool needs a sampleMetadata file where the different groups / factors are defined
+
+In the sampleMetadata file provided in this tutorial, you can find a column named *Osmo* that is meant to correspond to measures of osmolality,
+one way to represent the overall concentration of urine samples.
+Let's try to colour the PCA score plots according to that variable. For this, we will use the **Multivariate** {% icon tool %} Galaxy module.
+
+> <hands-on-title>Using <b>Multivariate</b> to visualise the two first components of a PCA</hands-on-title>
 >
-> 1. {% tool [goseq](toolshed.g2.bx.psu.edu/repos/iuc/goseq/goseq/1.50.0+galaxy0) %} with
->    - *"Differentially expressed genes file"*: `Gene IDs and differential expression`
->    - *"Gene lengths file"*: `Gene IDs and length`
->    - *"Gene categories"*: `Get categories`
->       - *"Select a genome to use"*: `Fruit fly (dm6)`
->       - *"Select Gene ID format"*: `Ensembl Gene ID`
->       - *"Select one or more categories"*: `KEGG`
->    - In *"Output Options"*
->      - *"Output Top GO terms plot?"*: `No`
->      - *"Extract the DE genes for the categories (GO/KEGG terms)?"*: `Yes`
+> 1. {% tool [Multivariate](toolshed.g2.bx.psu.edu/repos/ethevenot/multivariate/Multivariate/2.3.10) %} with the following parameters:
+>    - {% icon param-file %} *"Data matrix file"*: `Filtered_dataMatrix` (output of the last **Generic_Filter** {% icon tool %} job)
+>    - {% icon param-file %} *"Sample metadata file"*: `Filtered_sampleMetadata` (output of the last **Generic_Filter** {% icon tool %} job)
+>    - {% icon param-file %} *"Variable metadata file"*: `Filtered_variableMetadata` (output of the last **Generic_Filter** {% icon tool %} job)
+>    - *"Number of predictive components"*: `2`
+>    - *"Advanced graphical parameters"*: `Full parameter list`
+>        - *"Sample colors"*: `Osmo`
+>        - *"Amount by which plotting text should be magnified relative to the default"*: `0.4`
+>    - *"Advanced computational parameters"*: `Use default`
 >
-{: .hands_on}
-
-**goseq** generates with these parameters 2 outputs:
-
-1. A large table with the KEGG terms and some statistics
-
-    > <question-title></question-title>
-    >
-    > 1. How many KEGG pathways terms have been identified?
-    > 2. How many KEGG pathways terms are over-represented with an adjusted P value < 0.05?
-    > 3. What are the over-represented KEGG pathways terms?
-    > 4. How many KEGG pathways terms are under-represented with an adjusted P value < 0.05?
-    >
-    > > <solution-title></solution-title>
-    > >
-    > > 1. The file has 128 lines including an header, so 127 KEGG pathways have been identified.
-    > > 2. 2 KEGG pathways (2.34%) are over-represented, using {% tool [Filter data on any column using simple expressions](Filter1) %} on c6 (adjusted p-value for over-represented KEGG pathways)
-    > > 3. The 2 KEGG pathways over-represented are `01100` and `00010`. By searching on the [KEGG database](https://www.genome.jp/kegg/kegg2.html) for them, we can find more information about these pathways: `01100` corresponds to all metabolic pathways and `00010` to pathway for Glycolysis / Gluconeogenesis.
-    > > 4. No KEGG pathway is under-represented, using {% tool [Filter data on any column using simple expressions](Filter1) %} on c7 (adjusted p-value for under-represented KEGG pathways)
-    > {: .solution}
-    {: .question}
-
-2. A table with the differentially expressed genes (from the list we provided) associated with the KEGG pathways (`DE genes for categories (GO/KEGG terms)`)
-
-We could investigate which genes are involved in which pathways by looking at the second file generated by **goseq**. However, this can be cumbersome and we would like to see the pathways as represented in the previous image. **Pathview** ({% cite luo2013pathview %}) can help to automatically generate similar images to the previous one, while also adding extra information about the genes (e.g. expression) in our study.
-
-This tool needs 2 main inputs:
-
-- Pathway ID(s) to plot, either as just one ID or as a file with one column with the pathway IDs
-- A tabular file with the genes in the RNA-Seq experiment with 2 (or more) columns:
-  - the gene IDs (unique within the file)
-  - some information about the genes
-
-    This can be for example a p-value or a fold change. This information will be added to the pathway plot: the node of the corresponding gene will be colored given the value. If there are different columns, the different information will be plotted side by side on the node.
-
-Here we would like to visualize the 2 KEGG pathways: the over-represented `00010` (Glycolysis / Gluconeogenesis) and the most under-represented (yet not significantly) `03040` (Spliceosome). We would like the gene nodes to be colored by Log2 Fold Change for the differentially expressed genes because of the treatment.
-
-> <hands-on-title>Overlay log2FC on KEGG pathway</hands-on-title>
 >
-> 1. {% tool [Cut](Cut1) %} columns from a table with the following parameters:
->    - *"Cut columns"*: `c1,c3`
->    - *"Delimited by"*: `Tab`
->    - {% icon param-file %} *"From"*: `Genes with significant adj p-value`
->
-> 2. Rename to `Genes with significant adj p-value and their Log2 FC`
->
->    We extracted the ID and Log2 Fold Change for the genes that have a significant adjusted p-value.
->
-> 3. Create a new tabular file from the following (IDs of the pathways to plot) named `KEGG pathways to plot`
->
->    ```text
->    00010
->    03040
->    ```
->
-> 4. {% tool [Pathview](toolshed.g2.bx.psu.edu/repos/iuc/pathview/pathview/1.34.0+galaxy0) %} with
->    - *"Number of pathways to plot"*: `Multiple`
->      - {% icon param-file %} *"KEGG pathways"*: `KEGG pathways to plot`
->      - *"Does the file have header (a first line with column names)?"*: `No`
->    - *"Species to use"*: `Fly`
->    - *"Provide a gene data file?"*: `Yes`
->      - {% icon param-file %} *"Gene data"*: `Genes with significant adj p-value and their Log2 FC`
->      - *"Does the file have header (a first line with column names)?"*: `Yes`
->      - *"Format for gene data"*: `Ensembl Gene ID`
->    - *"Provide a compound data file?"*: `No`
->    - In *"Output Options"*
->      - *"Output for pathway"*: `KEGG native`
->        - *"Plot on same layer?"*: `Yes`
-{: .hands_on}
-
-**Pathview** generates a collection with the KEGG visualization: one file per pathway.
-
-> <question-title></question-title>
->
-> `dme00010` KEGG pathway from **Pathview**
->
-> ![KEGG pathway](../../images/ref-based/dme00010.png)
->
-> 1. What are the colored boxes?
-> 2. What is the color code?
->
-> > <solution-title></solution-title>
-> >
-> > 1. The colored boxes are genes in the pathway that are differentially expressed
-> > 2. Pay attention that the color code is counterintuitive: green is for value below 0, it means for genes with a log2FC < 0 and red for genes with a log2FC > 0.
-> >
-> {: .solution}
-{: .question}
-
-{% comment %}
-
-# Inference of the differential exon usage
-
-Next, we would like to know the differential exon usage between treated (PS depleted) and untreated samples using RNA-Seq exon counts. We will rework the mapping results we generated previously.
-
-We will use [DEXSeq](https://www.bioconductor.org/packages/release/bioc/html/DEXSeq.html). DEXSeq detects high sensitivity genes, and in many cases exons, that are subject to differential exon usage. But first, as for the differential gene expression, we need to count the number of reads mapping to the exons.
-
-## Count the number of reads per exon
-
-This step is similar to the step of [counting the number of reads per annotated gene](#count-the-number-of-reads-per-annotated-gene) except that, instead of HTSeq-count, we are using DEXSeq-Count.
-
-> <hands-on-title>Counting the number of reads per exon</hands-on-title>
->
-> 1. {% tool [DEXSeq-Count](toolshed.g2.bx.psu.edu/repos/iuc/dexseq/dexseq_count/1.28.1.0) %}: Use the **DEXSeq-Count** to prepare the *Drosophila* annotations to extract only exons with corresponding gene ids
->     - *"Mode of operation"*: `Prepare annotation`
->       - {% icon param-file %} *"GTF file"*: `Drosophila_melanogaster.BDGP6.32.109_UCSC.gtf.gz`
->
->    The output is again a GTF file that is ready to be used for counting
->
-> 2. {% tool [DEXSeq-Count](toolshed.g2.bx.psu.edu/repos/iuc/dexseq/dexseq_count/1.28.1.0) %}: Count reads using **DEXSeq-Count** with
->     - *"Mode of operation"*: `Count reads`
->       - {% icon param-files %} *"Input bam file"*: the `BAM` files generated by **RNA STAR**
->       - {% icon param-file %} *"DEXSeq compatible GTF file"*: the GTF file generated by **DEXSeq-Count**
->       - *"Is library paired end?"*: `Yes`
->       - *"Is library strand specific?*: `No`
->       - *"Skip all reads with alignment quality lower than the given minimum value"*:  `10`
->
-{: .hands_on}
-
-DEXSeq generates a count table similar to the one generated by featureCounts, but with counts for exons.
-
-> <question-title></question-title>
->
-> 1. Which exon has the most reads mapped to it for both samples?
-> 2. Which gene does this exon belong to?
-> 3. Is there a connection to the previous result obtained with featureCounts?
->
-> > <solution-title></solution-title>
-> >
-> > FBgn0284245:005 is the exon with the most reads mapped to it for both samples. It is part of FBgn0284245, the feature with the most reads mapped on it (from featureCounts).
-> >
-> {: .solution}
->
-{: .question}
-
-## Differential exon usage
-
-DEXSeq usage is similar to DESeq2. It uses similar statistics to find differentially used exons.
-
-As for DESeq2, in the previous step, we counted only reads that mapped to exons on chromosome 4 and for only one sample. To be able to identify differential exon usage induced by PS depletion, all datasets (3 treated and 4 untreated) must be analyzed following the same procedure. To save time, we did that for you. The results are available on [Zenodo]({{ page.zenodo_link }}):
-
-- The results of running DEXSeq-count in 'Prepare annotation' mode
-- Seven count files generated in 'Count reads' mode
-
-> <hands-on-title></hands-on-title>
->
-> 1. Create a **new empty history**
->
->    {% snippet faqs/galaxy/histories_create_new.md %}
->
-> 2. Import the seven count files from [Zenodo]({{ page.zenodo_link }}) or the Shared Data library (if available):
->
->    - `Drosophila_melanogaster.BDGP6.87.dexseq.gtf`
->    - `GSM461176_untreat_single.exon.counts`
->    - `GSM461177_untreat_paired.exon.counts`
->    - `GSM461178_untreat_paired.exon.counts`
->    - `GSM461179_treat_single.exon.counts`
->    - `GSM461180_treat_paired.exon.counts`
->    - `GSM461181_treat_paired.exon.counts`
->    - `GSM461182_untreat_single.exon.counts`
->
->    ```text
->    {{ page.zenodo_link }}/files/Drosophila_melanogaster.BDGP6.87.dexseq.gtf
->    {{ page.zenodo_link }}/files/GSM461176_untreat_single.exon.counts
->    {{ page.zenodo_link }}/files/GSM461177_untreat_paired.exon.counts
->    {{ page.zenodo_link }}/files/GSM461178_untreat_paired.exon.counts
->    {{ page.zenodo_link }}/files/GSM461179_treat_single.exon.counts
->    {{ page.zenodo_link }}/files/GSM461180_treat_paired.exon.counts
->    {{ page.zenodo_link }}/files/GSM461181_treat_paired.exon.counts
->    {{ page.zenodo_link }}/files/GSM461182_untreat_single.exon.counts
->    ```
->
-> 3. {% tool [DEXSeq](toolshed.g2.bx.psu.edu/repos/iuc/dexseq/dexseq/1.28.1+galaxy1) %}: Run **DEXSeq** with
->    - {% icon param-file %} *"GTF file created from DEXSeq-Count tool"*: `Drosophila_melanogaster.BDGP6.87.dexseq.gtf`
->    - In *"Factor"*:
->       - In "1: Factor"
->           - *"Specify a factor name"*: `condition`
->           - In *"Factor level"*:
->               - In *"1: Factor level"*:
->                   - *"Specify a factor level"*: `treated`
->                   - {% icon param-files %} *"Counts file(s)"*: the 3 exon count files with `treated` in their name
->               - In *"2: Factor level"*:
->                   - *"Specify a factor level"*: `untreated`
->                   - {% icon param-files %} *"Counts file(s)"*: the 4 exon count files with `untreated` in their name
->       - Click on *"Insert Factor"* (not on "Insert Factor level")
->       - In "2: Factor"
->           - "Specify a factor name" to `sequencing`
->           - In *"Factor level"*:
->               - In *"1: Factor level"*:
->                   - *"Specify a factor level"*: `PE`
->                   - {% icon param-files %} *"Counts file(s)"*: the 4 exon count files with `paired` in their name
->               - In *"2: Factor level"*:
->                   - *"Specify a factor level"*: `SE`
->                   - {% icon param-files %} *"Counts file(s)"*: the 3 exon count files with `single` in their name
->
->    > <comment-title></comment-title>
+>    > <tip-title>Comment to W4M users</tip-title>
 >    >
->    > Unlike DESeq2, DEXSeq does not allow flexible primary factor names. Always use your primary factor name as "condition"
->    {: .comment}
+>    > In the [GTN_LCMSprocessing](https://workflow4metabolomics.usegalaxy.fr/u/peteram/h/gtnlcmsdataprocessing) history, this step corresponds to the datasets number 33 to 36.
+>    {: .tip}
+>
 {: .hands_on}
 
-Similarly to DESeq2, DEXSeq generates a table with:
+Among the four output files generated by the tool, the one we are interested in is the *Multivariate_figure.pdf* file.
+The PCA scores plot representing the projection of samples on the two first components is located at the bottom left corner:
 
-1. Exon identifiers
-2. Gene identifiers
-3. Exon identifiers in the Gene
-4. Mean normalized counts, averaged over all samples from both conditions
-5. Logarithm (to basis 2) of the fold change
+![The picture represents the PCA scores plot of components t1 (32% of total variability) and t2 (9% of total variability) with sample labels coloured according to the values from the Osmo column of the sampleMetadata file. We observe a gradation in the colours of samples following the first bisector of the graphic.](../../images/lcmsproc_osmo.png "PCA scores plot")
 
-   The log2 fold changes are based on primary factor level 1 vs. factor level 2. The order of factor levels is then important. For example, for the factor 'Condition', DESeq2 computes fold changes of 'treated' samples against 'untreated', *i.e.* the values correspond to up- or downregulations of genes in treated samples.
+Taking into account that the PCA was computed on Unit-Variance-scaled data (see the **Multivariate** {% icon tool %} tool's help section for more details),
+this result confirms the impact of total concentration on our dataset.
+Since this effect in data is independant of the question of interest that we suppose we investigate in the study (in the case of this tutorial),
+we may want to get rid of this effect to prevent a power reduction in further statistical analysis.
 
-6. Standard error estimate for the log2 fold change estimate
-7. *p*-value for the statistical significance of this change
-8. *p*-value adjusted for multiple testing with the Benjamini-Hochberg procedure which controls false discovery rate ([FDR](https://en.wikipedia.org/wiki/False_discovery_rate))
 
-> <hands-on-title></hands-on-title>
->
-> 1. {% tool [Filter data on any column using simple expressions](Filter1) %} to extract exons with a significant differential usage (adjusted *p*-value equal or below 0.05) between treated and untreated samples
->
-> > <question-title></question-title>
-> >
-> > How many exons show a significant change in usage between these conditions?
-> >
-> > > <solution-title></solution-title>
-> > >
-> > > We get 38 exons (12.38%) with a significant usage change between treated and untreated samples.
-> > >
-> > {: .solution}
-> {: .question}
-{: .hands_on}
 
-{% endcomment %}
+## Clustering
+
 
 # Conclusion
 
+In this computer assignment, we have analyzed real RNA sequencing data to extract useful information, such as which genes are up or downregulated by IR. Your complete workflow can be extracted using the _Worklows_ button. Do this. You can always rerun and adapt your entire workflow.
 
-
-In this tutorial, we have analyzed real RNA sequencing data to extract useful information, such as which genes are up or downregulated by depletion of the *Pasilla* gene, but also which GO terms or KEGG pathways they are involved in. To answer these questions, we analyzed RNA sequence datasets using a reference-based RNA-Seq data analysis approach. This approach can be summarized with the following scheme:
-
-![Summary of the analysis pipeline used](../../images/ref-based/tutorial-scheme.png "Summary of the analysis pipeline used")
