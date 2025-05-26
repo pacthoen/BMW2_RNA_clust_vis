@@ -77,7 +77,7 @@ In the first part of this tutorial we will upload the count matrices to your Gal
 >    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/Mus_musculus.NCBIM37.65.gtf.gz
 >    ```
 
-_Note:_ The numbers in the count files are the number of sequence reads to a specific genes. Only mRNAs that were detected in all samples were selected during the preprocessing of the data.
+_Note:_ The numbers in the count files are the number of sequence reads to a specific gene. Only mRNAs that were detected in all samples were selected during the preprocessing of the data.
 
 >    > <question-title></question-title>
 >    >
