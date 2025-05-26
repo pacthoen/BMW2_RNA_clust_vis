@@ -193,7 +193,7 @@ We can now run **DESeq2**:
 
     5. An [MA plot](https://en.wikipedia.org/wiki/MA_plot):
 
-        This displays the global view of the relationship between the expression change of conditions (log ratios, M), the average expression strength of the genes (average mean, A), and the ability of the algorithm to detect differential gene expression. The genes that passed the significance threshold (adjusted p-value < 0.1) are colored in red.
+        This displays the global view of the relationship between the expression change of conditions (log ratios, M), the average expression strength of the genes (average mean, A), and the ability of the algorithm to detect differential gene expression. The genes that passed the significance threshold (adjusted p-value < 0.1) are colored in blue.
 
 - A summary file with the following values for each gene:
 
