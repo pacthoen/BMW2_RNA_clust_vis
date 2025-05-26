@@ -77,6 +77,7 @@ In the first part of this tutorial we will upload the count matrices to your Gal
 >    ```text
 >    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/Mus_musculus.NCBIM37.65.gtf.gz
 >    ```
+> > **Alternative** Like before, if this results in an error, you can download the gtf.gz file from the [github site](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/Mus_musculus.NCBIM37.65.gtf.gz) to your local computer and import the gtf.gz file (no need for unzipping) using _Choose local file_ option from the Upload menu
 
 _Note:_ The numbers in the count files are the number of sequence reads to a specific gene. Only mRNAs that were detected in all samples were selected during the preprocessing of the data.
 
