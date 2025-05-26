@@ -21,7 +21,7 @@ questions:
     - How to cluster similar samples and genes?
 objective:
     - To learn the principles of the analysis and visualisation of a multidimensional data analysis. We will use RNA-seq data as an example of a multidimensional -omics dataset. 
-time_estimation: 4h
+time_estimation: 6h
 key_points:
     - A spliced mapping tool should be used on eukaryotic RNA-Seq data
     - Numerous factors should be taken into account when running a differential gene expression analysis
