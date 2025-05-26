@@ -446,6 +446,7 @@ For filtering the most variable genes, we will compute the coefficient of variat
 >       - *"Calculate"*: `Custom`
 >       - *"Custom function on vec"*: `vec.std`
 >       - *"For each"*: `row`
+>       - *"Output formatting options"*: keep everything checked. Output should have column and row headers
 >    - See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20085500.png)
 > 2. Use the the _Table compute_ tool to calculate the mean (mean)
 >    - *"Table"*: `VST normalized data`
@@ -454,6 +455,7 @@ For filtering the most variable genes, we will compute the coefficient of variat
 >       - *"Calculate"*: `Custom`
 >       - *"Custom function on vec"*: `vec.mean`
 >       - *"For each"*: `row`
+>       - *"Output formatting options"*: keep everything checked. Output should have column and row headers
 > 3. Use the _Join two files_ tool to merge the normalised count data with the standard deviation and mean datasets (two steps)
 >    -  *"First line is a header line"*: `Yes`
 > 4. Use the _Compute on row_ tool to calculate the CV. Expression `c14/c15`. Label the new row as `CV`
@@ -479,7 +481,8 @@ The tool needs a featureMetadata file with the names (and optional characteristi
 
 ### Upload metadata
 
-> 1. Create the featureMetadata file by cutting the first column from the `Input data for PCA and clustering` object using the _cut_ tool
+> 1. Create the featureMetadata file using the _cut_ tool on the `Input data for PCA and clustering` object
+>    - *"Cut columns"*: c1
 > 2. Import the count files from our [github repository](https://github.com/pacthoen/BMW2_RNA_clust_vis) using the Data Upload menu (top left) and the button _Paste/Fetch Data_. Indicate that the data files are `Tabular`. 
 >    ```text
 >    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/GSE71176_sample_metadata.txt
