@@ -222,12 +222,12 @@ For more information about **DESeq2** and its outputs, you can have a look at th
 - An output file with Normalized counts
 - An output file with VST-Normalized counts (VST stands for Variance Stabilization and Transformation; this is the preferred normalization method in DESeq2 and we will use these counts later on for PCA and clustering
 
-Use the **filter** tool on the summary file to identify the genes with absolute fold-change greater than 2. Use the condition: abs(c3)>2. Number of header lines to skip: 1. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20130228.png). And use the **sort** tool to identify the genes with the largest fold-change (most upregulated). See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20132050.png) 
+Use the **filter** tool on the DESeq2 result file to identify the genes with absolute fold-change greater than 2. Use the condition: abs(c3)>2. Number of header lines to skip: 1. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20130228.png). And use the **sort** tool to identify the genes with the largest fold-change (most upregulated). See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20132050.png) 
 > <question-title></question-title>
 >
 > 1. What does it mean when an mRNA has an absolute 2logFC greater than 2?
 > 2. How many mRNAs have an absolute 2logFC greater than 2?
-> 3. What is the mRNA that is most upregulated in and what is its false discovery rate (the chance that this is a false positive)? 
+> 3. What is the mRNA that is most upregulated in IR- vs mock-treated cells and what is its false discovery rate (the chance that this is a false positive)? 
 >
 > > <solution-title></solution-title>
 > >
@@ -304,7 +304,7 @@ The annotated table contains no column names, which makes it difficult to read. 
 
 ## Create Volcano plot to visualise differentially expressed genes
 
-Select the tool _Volcano Plot_
+Select the tool **Volcano Plot**
 > In a Volcano plot, the 2logFC (x-axis) is plotted against the -log10(P-value).
 > > Choose the right column numbers. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20162602.png). Change the significant threshold to 0 and LogFC 2 as as thresholds to colour.
 > >  Put in correct titles under _Plot options_.
@@ -343,10 +343,10 @@ We have extracted genes that are differentially expressed in IR- vs. mock-treate
 - A file with information about the length of a gene to correct for potential length bias in differentially expressed genes
 
 
-> 1. Use the _Gene length and GC content_ tool on the _Annotation file_ (gtf format). See this [screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20210701.png)
+> 1. Use the **Gene length and GC content** tool on the _Annotation file_ (gtf format). See this [screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20210701.png)
 >    - *"Analysis to perform"*: `gene lengths only`
-> 2. Merge the gene length and the annotated DESeq2 ouput file **DESeq2 result file** with primary factor Treatment using the _Join two datasets side by side_ tool. In *"Keep the header lines"*: `No`. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20214135.png)
-> 3. Use the _Compute on rows_ tool to create a column with TRUE and FALSE using the following expression: `bool(float(c3)>2)`. In the *"Error handling"* choose in *"Autodetect column types"* `No` and *"Fail on references to non-existent columns"* `No` and *"If an expression cannot be computed for a row"* choose `Fill in a replacement value` and Replacement value `False`. See this [screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20222441.png)
+> 2. Merge the gene length and the annotated DESeq2 ouput file **DESeq2 result file** with primary factor Treatment using the **Join two datasets side by side** tool. In *"Keep the header lines"*: `No`. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20214135.png)
+> 3. Use the **Compute on rows** tool to create a column with TRUE and FALSE using the following expression: `bool(float(c3)>2)`. In the *"Error handling"* choose in *"Autodetect column types"* `No` and *"Fail on references to non-existent columns"* `No` and *"If an expression cannot be computed for a row"* choose `Fill in a replacement value` and Replacement value `False`. See this [screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-22%20222441.png)
 > 4. {% tool [Cut](Cut1) %} columns from a table with the following parameters:
 >    - *"Cut columns"*: `c1,c9`
 >    - *"Delimited by"*: `Tab`
@@ -439,7 +439,7 @@ In the second part of this computer assignment we will use commonly used techniq
 
 ## Filter for most variable genes
 For filtering the most variable genes, we will compute the coefficient of variation (CV). This is defined as the standard deviation divided by the mean. 
-> 1. Use the the _Table compute_ tool to calculate the standard deviation (std)
+> 1. Use the the **Table compute** tool to calculate the standard deviation (std)
 >    - *"Table"*: `VST normalized data`
 >    - *"Input data has"*: `Column names on the first row` and `Row names on the first column`
 >    - *"Type of table operation "*: `Compute expression across rows or columns`
@@ -448,7 +448,7 @@ For filtering the most variable genes, we will compute the coefficient of variat
 >       - *"For each"*: `row`
 >       - *"Output formatting options"*: keep everything checked. Output should have column and row headers
 >    - See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20085500.png)
-> 2. Use the the _Table compute_ tool to calculate the mean (mean)
+> 2. Use the the **Table compute** tool to calculate the mean (mean)
 >    - *"Table"*: `VST normalized data`
 >    - *"Input data has"*: `Column names on the first row` and `Row names on the first column`
 >    - *"Type of table operation "*: `Compute expression across rows or columns`
@@ -456,17 +456,17 @@ For filtering the most variable genes, we will compute the coefficient of variat
 >       - *"Custom function on vec"*: `vec.mean`
 >       - *"For each"*: `row`
 >       - *"Output formatting options"*: keep everything checked. Output should have column and row headers
-> 3. Use the _Join two files_ tool to merge the normalised count data with the standard deviation and mean datasets (two steps)
+> 3. Use the **Join two files** tool to merge the normalised count data with the standard deviation and mean datasets (two steps)
 >    -  *"First line is a header line"*: `Yes`
-> 4. Use the _Compute on row_ tool to calculate the CV. Expression `c14/c15`. Label the new row as `CV`
-> 5. Use the _Sort_ tool to sort the genes based on CV in descending order. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20104444.png)
+> 4. Use the **Compute on row** tool to calculate the CV. Expression `c14/c15`. Label the new row as `CV`
+> 5. Use the **Sort** tool to sort the genes based on CV in descending order. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20104444.png)
 >    - *"Number of header lines"*: `1`
 >    - *"Column selections"*
 >       - *"on column"*: `16`
 >       - *"in"*: `decsending order`
 >       - *"Flavour"*: `Fast numeric sort (-n)`     
-> 6. Select the first 2000 rows using the _Select first_ tool. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20105700.png)
-> 7. Select only the columns with data (and the first column with the gene identifiers; columns 1-13) using the _Cut_ tool
+> 6. Select the first 2000 rows using the **Select first** tool. See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20105700.png)
+> 7. Select only the columns with data (and the first column with the gene identifiers; columns 1-13) using the **Cut** tool
 > 8. Relabel the file as `Input data for PCA and clustering` 
 >    
 >    - 
@@ -474,14 +474,14 @@ For filtering the most variable genes, we will compute the coefficient of variat
 
 ## Principal Component Analysis (PCA)
 PCA is a dimension reduction technique to identify the main sources of variation. 
-For this part of the assignment we will use the _multivariate_ tool{% icon tool %}. There is a separate [tutorial](https://training.galaxyproject.org/topics/metabolomics/tutorials/lcms-dataprocessing/tutorial.html#bibliography) for the _multivariate_ tool applied to metabolomics data.   
+For this part of the assignment we will use the _multivariate_ tool{% icon tool %}. There is a separate [tutorial](https://training.galaxyproject.org/topics/metabolomics/tutorials/lcms-dataprocessing/tutorial.html#bibliography) for the **multivariate** tool applied to metabolomics data.   
 
 The tool needs a sampleMetadata file where the different groups / factors are defined. You will be able to colour the PCA score plots according to those groups. 
 The tool needs a featureMetadata file with the names (and optional characteristics) of the genes. 
 
 ### Upload metadata
 
-> 1. Create the featureMetadata file using the _cut_ tool on the `Input data for PCA and clustering` object
+> 1. Create the featureMetadata file using the **cut** tool on the `Input data for PCA and clustering` object
 >    - *"Cut columns"*: c1
 > 2. Import the count files from our [github repository](https://github.com/pacthoen/BMW2_RNA_clust_vis) using the Data Upload menu (top left) and the button _Paste/Fetch Data_. Indicate that the data files are `Tabular`. 
 >    ```text
@@ -523,7 +523,7 @@ The PCA scores plot representing the projection of samples on the two first comp
 
 ## Clustering
 
-We will use the _heatmap2_ tool to perform the clustering of samples based on their mRNA expression patterns and evaluate the influence of different clustering algorithms (average linkage vs single linkage) and distance measures (Euclidean distance or Pearson correlation). See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20152150.png)
+We will use the **heatmap2** tool to perform the clustering of samples based on their mRNA expression patterns and evaluate the influence of different clustering algorithms (average linkage vs single linkage) and distance measures (Euclidean distance or Pearson correlation). See this [Screenshot](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/screenshots/Screenshot%202025-05-23%20152150.png)
 
 > 1. Select as *"Input"* `Input data for PCA and clustering`
 >    - *"Plot title"*: indicate the clustering algorithm and the distance measure used
