@@ -284,7 +284,7 @@ The annotated table contains no column names, which makes it difficult to read. 
 
 > <hands-on-title>Add column names</hands-on-title>
 >
-> 1. Create a new file (`header`) from the following (header line of the DESeq2 output)
+> 1. In the Upload menu, create a new file using the _Paste/Fetch data_ option form the Upload menu, by directly pasting in the line below in the white area, and call it `header` instead of `New File`
 >
 >    ```text
 >    GeneID	Base mean	log2(FC)	StdErr	Wald-Stats	P-value	P-adj	Chromosome	Start	End	Strand	Feature	Gene name
