@@ -68,6 +68,7 @@ In the first part of this tutorial we will upload the count matrices to your Gal
 >    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/null_IR_1.csv
 >    https://raw.githubusercontent.com/pacthoen/BMW2_RNA_clust_vis/refs/heads/main/data/null_IR_2.csv 
 >    ``` 
+> > **Alternative** If this results in an error, you may download the zip file with all the input data from the [github site](https://github.com/pacthoen/BMW2_RNA_clust_vis/blob/main/data/input_data_Bcell_dataset.zip) to your local computer, unzip and import all the files using the _Choose local file_ option from the Upload menu. 
 >
 > 3. Inspect some of the files by hitting the icon with the _eye_ button. 
 >
