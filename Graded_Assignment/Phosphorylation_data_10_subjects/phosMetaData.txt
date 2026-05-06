@@ -1,0 +1,22 @@
+sample	status	patientID
+phos_10N.csv	Normal	Patient10
+phos_05N.csv	Normal	Patient05
+phos_06N.csv	Normal	Patient06
+phos_07N.csv	Normal	Patient07
+phos_08N.csv	Normal	Patient08
+phos_09N.csv	Normal	Patient09
+phos_01N.csv	Normal	Patient01
+phos_02N.csv	Normal	Patient02
+phos_03N.csv	Normal	Patient03
+phos_04N.csv	Normal	Patient04
+phos_02T.csv	Tumour	Patient02
+phos_01T.csv	Tumour	Patient01
+phos_03T.csv	Tumour	Patient03
+phos_09T.csv	Tumour	Patient09
+phos_08T.csv	Tumour	Patient08
+phos_07T.csv	Tumour	Patient07
+phos_06T.csv	Tumour	Patient06
+phos_05T.csv	Tumour	Patient05
+phos_04T.csv	Tumour	Patient04
+phos_10T.csv	Tumour	Patient10
+
